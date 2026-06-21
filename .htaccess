@@ -1,0 +1,85 @@
+# =============================================
+# Alenmodwebhub - Apache Configuration
+# Premium SEO & Security Settings
+# =============================================
+
+# Enable Rewrite Engine
+RewriteEngine On
+RewriteBase /alenmodwebhub
+
+# Force HTTPS (uncomment in production)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+# Remove trailing slash
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.+)/$ /$1 [R=301,L]
+
+# SEO Friendly URLs - Blog Posts
+RewriteRule ^blog/([a-z0-9-]+)$ blog.php?slug=$1 [L,QSA]
+
+# SEO Friendly URLs - Projects
+RewriteRule ^project/([a-z0-9-]+)$ project.php?slug=$1 [L,QSA]
+
+# Cache Control
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType text/javascript "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType application/x-javascript "access plus 1 month"
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresDefault "access plus 2 days"
+</IfModule>
+
+# Gzip Compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE image/svg+xml
+    AddOutputFilterByType DEFLATE font/woff
+    AddOutputFilterByType DEFLATE font/woff2
+</IfModule>
+
+# Security Headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
+
+# Prevent directory listing
+Options -Indexes
+
+# Protect sensitive files
+<FilesMatch "\.(env|sql|md|log|json)$">
+    Require all denied
+</FilesMatch>
+
+# Protect sensitive directories via RewriteRule
+RewriteRule ^config/ - [F,L]
+RewriteRule ^includes/ - [F,L]
+RewriteRule ^database/ - [F,L]
+RewriteRule ^partials/ - [F,L]
+
+# Protect sensitive files
+RewriteRule \.(env|sql|md|log|json)$ - [F,L]
+
+# Custom Error Pages
+ErrorDocument 404 /404.php
+ErrorDocument 500 /500.php
