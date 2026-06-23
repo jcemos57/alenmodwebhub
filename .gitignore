@@ -9,3 +9,5 @@ build/
 Thumbs.db
 uploads/*
 !uploads/.gitkeep
+frontend/
+*.git-credentials
